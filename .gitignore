@@ -3,5 +3,6 @@
 *.sublime-project
 *.sublime-workspace
 *.out
+*.vcd
 hardware.json
 .sconsign.dblite
