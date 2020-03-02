@@ -10,7 +10,7 @@ module Binary_to_BCD #(parameter INPUT_WIDTH = 7, parameter DECIMAL_DIGITS = 2)
 	reg [DECIMAL_DIGITS*4-1:0] r_BCD = 0;
 
 	integer i_Counter = INPUT_WIDTH-1;
-	wire [3:0] w_LSD;
+	reg r_added = 1'b0;
 
 	always @(posedge i_Clock)
 	begin
@@ -18,13 +18,16 @@ module Binary_to_BCD #(parameter INPUT_WIDTH = 7, parameter DECIMAL_DIGITS = 2)
 			if (i_Counter == INPUT_WIDTH-1)
 				r_BCD <= 0;
 			if (i_Counter >= 0) begin
-				if (w_LSD > 1)
-					r_BCD[3:0] <= w_LSD + 3;
-
-				// shift all bits by one and append MSB from original binary
-				r_BCD <= r_BCD << 1;
-				r_BCD[0] <= i_Binary[i_Counter];
-				i_Counter <= i_Counter - 1;
+				if (r_BCD[3:0] > 4 && ~r_added) begin
+					r_BCD[3:0] <= r_BCD[3:0] + 3;
+					r_added = 1'b1;
+				end	else begin
+					// shift all bits by one and append MSB from original binary
+					r_added = 1'b0;
+					r_BCD <= r_BCD << 1;
+					r_BCD[0] <= i_Binary[i_Counter];
+					i_Counter <= i_Counter - 1;
+				end
 			end 
 			if (i_Counter < 0) begin
 				r_Input <= i_Binary;
@@ -33,7 +36,6 @@ module Binary_to_BCD #(parameter INPUT_WIDTH = 7, parameter DECIMAL_DIGITS = 2)
 		end
 	end
 
-	assign w_LSD = r_BCD[3:0];
 	assign o_BCD = r_BCD;
 
 endmodule // Binary_to_BCD

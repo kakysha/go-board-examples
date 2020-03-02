@@ -17,7 +17,7 @@ module Debounce_Project_Top (
 	output o_Segment2_G
 );
 	reg [6:0] r_Counter = 0;
-	reg [7:0] r_BCD;
+	wire [7:0] r_BCD;
 	reg  r_Switch_1 = 1'b0;
 	wire w_Switch_1;
 
