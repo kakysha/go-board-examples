@@ -19,6 +19,7 @@ module UART_RX_TB;
 	reg r_RX_Serial = 1;
 	wire w_TX_Serial;
 	wire [7:0] w_RX_Byte;
+	wire w_DV;
 
 
 	// Takes in input byte and serializes it
@@ -47,13 +48,15 @@ module UART_RX_TB;
 
 
 	UART_RX #(.CLKS_PER_BIT(c_CLKS_PER_BIT)) UART_RX_INST
-		(.i_Clock(r_Clock),
+		(	.i_Clock(r_Clock),
 			.i_RX_Serial(r_RX_Serial),
-			.o_RX_Byte(w_RX_Byte)
+			.o_RX_Byte(w_RX_Byte),
+			.o_DV       (w_DV)
 		);
 
 	UART_TX #(.CLKS_PER_BIT(c_CLKS_PER_BIT)) UART_TX_INST
-		(.i_Clock(r_Clock),
+		(   .i_Clock(r_Clock),
+			.i_DV(w_DV),
 			.i_TX_Byte(w_RX_Byte),
 			.o_TX_Serial(w_TX_Serial)
 		);
@@ -77,11 +80,11 @@ module UART_RX_TB;
 				$display("Test Failed - Incorrect Byte Received");
 
 			@(posedge r_Clock);
-			UART_WRITE_BYTE(8'h37);
+			UART_WRITE_BYTE(8'h56);
 			@(posedge r_Clock);
 
 			// Check that the correct command was received
-			if (w_RX_Byte == 8'h37)
+			if (w_RX_Byte == 8'h56)
 				$display("Test Passed - Correct Byte Received");
 			else
 				$display("Test Failed - Incorrect Byte Received");

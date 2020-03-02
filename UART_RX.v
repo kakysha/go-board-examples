@@ -10,6 +10,7 @@
 module UART_RX #(parameter CLKS_PER_BIT = 217) (
 	input        i_Clock,
 	input        i_RX_Serial,
+	output		 o_DV,
 	output [7:0] o_RX_Byte
 );
 
@@ -32,8 +33,9 @@ always @(posedge i_Clock) begin
 						r_SM_State <= STATE_READING;
 					end else
 						r_Clock_Count <= r_Clock_Count + 1;
-				end else
+				end else begin
 					r_Clock_Count <= 0;
+				end
 
 			end
 		STATE_READING:
@@ -63,6 +65,7 @@ always @(posedge i_Clock) begin
 end
 
 assign o_RX_Byte = r_RX_Byte;
+assign o_DV = r_Bits_Count == 8 ? 1'b1 : 1'b0;
 
 endmodule // UART_RX
 

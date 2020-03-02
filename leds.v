@@ -20,17 +20,19 @@ module UART_RX_To_7_Seg_Top (
 	output o_Segment2_G
 );
 
-	wire w_RX_DV;
+	wire w_DV;
 	wire [7:0] w_RX_Byte;
 
 	// 25,000,000 / 115,200 = 217
 	UART_RX #(.CLKS_PER_BIT(217)) UART_RX_Inst
 		(.i_Clock(i_Clk),
 			.i_RX_Serial(i_UART_RX),
-			.o_RX_Byte(w_RX_Byte));
+			.o_RX_Byte(w_RX_Byte),
+			.o_DV(w_DV));
 
 	UART_TX #(.CLKS_PER_BIT(217)) UART_TX_Inst
 		(.i_Clock(i_Clk),
+			.i_DV(w_DV),
 			.i_TX_Byte(w_RX_Byte),  // Pass RX to TX module for loopback
 			.o_TX_Serial(o_UART_TX));
 
