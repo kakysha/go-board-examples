@@ -15,9 +15,9 @@ module Binary_to_BCD #(parameter INPUT_WIDTH = 7, parameter DECIMAL_DIGITS = 2)
 	always @(posedge i_Clock)
 	begin
 		if (r_Input != i_Binary) begin
-			if (i_Counter == INPUT_WIDTH-1)
+			if (i_Counter == INPUT_WIDTH-1 && r_BCD != 0)
 				r_BCD <= 0;
-			if (i_Counter >= 0) begin
+			else if (i_Counter >= 0) begin
 				if (r_BCD[3:0] > 4 && ~r_added) begin
 					r_BCD[3:0] <= r_BCD[3:0] + 3;
 					r_added = 1'b1;

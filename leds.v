@@ -35,7 +35,7 @@ module Debounce_Project_Top (
 
 	Binary_To_7Segment Bt7Inst1 (
 		.i_Clk       (i_Clk),
-		.i_Binary_Num(r_BCD[6:4]),
+		.i_Binary_Num(r_BCD[7:4]),
 		.o_Segment_A (o_Segment1_A),
 		.o_Segment_B (o_Segment1_B),
 		.o_Segment_C (o_Segment1_C),

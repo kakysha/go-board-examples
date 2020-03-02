@@ -17,10 +17,26 @@ always
 initial begin
 	i_Binary <= 10;
 	#period;
-	if (o_BCD == 8'd16)
+	if (o_BCD == 8'h10)
 		$display("Test Passed - Correct Byte Received");
 	else
 		$display("Test Failed - Incorrect Byte Received");
+
+	i_Binary <= 11;
+	#period;
+	if (o_BCD == 8'h11)
+		$display("Test Passed - Correct Byte Received");
+	else
+		$display("Test Failed - Incorrect Byte Received");
+
+	i_Binary <= 99;
+	#period;
+	if (o_BCD == 8'h99)
+		$display("Test Passed - Correct Byte Received");
+	else
+		$display("Test Failed - Incorrect Byte Received");
+
+	#period
 	$finish;
 end
 
