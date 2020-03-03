@@ -2,6 +2,7 @@
 `include "modules/UART_RX.v"
 `include "modules/UART_TX.v"
 `include "modules/VGA_Sync.v"
+`include "modules/VGA_Sync_Porch.v"
 `include "modules/Test_Pattern_Gen.v"
 
 module main (
@@ -49,8 +50,9 @@ parameter c_TOTAL_ROWS  = 525;
 parameter c_ACTIVE_COLS = 640;
 parameter c_ACTIVE_ROWS = 480;
 
- // Common VGA Signals
-wire [c_VIDEO_WIDTH-1:0] w_Red_Video_TP, w_Grn_Video_TP, w_Blu_Video_TP;
+// Common VGA Signals
+wire w_VGA_HSync, w_VGA_VSync;
+wire [c_VIDEO_WIDTH-1:0] w_Red_Video_TP, w_Grn_Video_TP, w_Blu_Video_TP, w_Red_Video_Porch, w_Grn_Video_Porch, w_Blu_Video_Porch;
 wire [9:0] w_Row_Count, w_Col_Count;
 
 // 25,000,000 / 115,200 = 217
@@ -96,8 +98,8 @@ VGA_Sync #(.TOTAL_COLS(c_TOTAL_COLS),
 	.ACTIVE_COLS(c_ACTIVE_COLS),
 	.ACTIVE_ROWS(c_ACTIVE_ROWS)) VGA_Sync_Inst
 (.i_Clk(i_Clk),
-	.o_HSync(o_VGA_HSync),
-	.o_VSync(o_VGA_VSync),
+	.o_HSync(w_VGA_HSync),
+	.o_VSync(w_VGA_VSync),
 	.o_Col_Count(w_Col_Count),
 	.o_Row_Count(w_Row_Count)
 );
@@ -114,16 +116,36 @@ Test_Pattern_Gen_Inst
 		.o_Grn_Video(w_Grn_Video_TP),
 		.o_Blu_Video(w_Blu_Video_TP));
 
-assign o_VGA_Red_0 = w_Red_Video_TP[0];
-assign o_VGA_Red_1 = w_Red_Video_TP[1];
-assign o_VGA_Red_2 = w_Red_Video_TP[2];
+VGA_Sync_Porch  #(.VIDEO_WIDTH(c_VIDEO_WIDTH),
+	.TOTAL_COLS(c_TOTAL_COLS),
+	.TOTAL_ROWS(c_TOTAL_ROWS),
+	.ACTIVE_COLS(c_ACTIVE_COLS),
+	.ACTIVE_ROWS(c_ACTIVE_ROWS))
+VGA_Sync_Porch_Inst
+	(.i_Clk(i_Clk),
+		.i_HSync(w_VGA_HSync),
+		.i_VSync(w_VGA_VSync),
+		.i_Col_Count(w_Col_Count),
+		.i_Row_Count(w_Row_Count),
+		.i_Red_Video(w_Red_Video_TP),
+		.i_Grn_Video(w_Grn_Video_TP),
+		.i_Blu_Video(w_Blu_Video_TP),
+		.o_HSync(o_VGA_HSync),
+		.o_VSync(o_VGA_VSync),
+		.o_Red_Video(w_Red_Video_Porch),
+		.o_Grn_Video(w_Grn_Video_Porch),
+		.o_Blu_Video(w_Blu_Video_Porch));
 
-assign o_VGA_Grn_0 = w_Grn_Video_TP[0];
-assign o_VGA_Grn_1 = w_Grn_Video_TP[1];
-assign o_VGA_Grn_2 = w_Grn_Video_TP[2];
+assign o_VGA_Red_0 = w_Red_Video_Porch[0];
+assign o_VGA_Red_1 = w_Red_Video_Porch[1];
+assign o_VGA_Red_2 = w_Red_Video_Porch[2];
 
-assign o_VGA_Blu_0 = w_Blu_Video_TP[0];
-assign o_VGA_Blu_1 = w_Blu_Video_TP[1];
-assign o_VGA_Blu_2 = w_Blu_Video_TP[2];
+assign o_VGA_Grn_0 = w_Grn_Video_Porch[0];
+assign o_VGA_Grn_1 = w_Grn_Video_Porch[1];
+assign o_VGA_Grn_2 = w_Grn_Video_Porch[2];
+
+assign o_VGA_Blu_0 = w_Blu_Video_Porch[0];
+assign o_VGA_Blu_1 = w_Blu_Video_Porch[1];
+assign o_VGA_Blu_2 = w_Blu_Video_Porch[2];
 
 endmodule
