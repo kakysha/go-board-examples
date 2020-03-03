@@ -1,12 +1,10 @@
-//////////////////////////////////////////////////////////////////////
-// File Downloaded from http://www.nandland.com
-//////////////////////////////////////////////////////////////////////
-
+`include "../modules/UART_RX.v"
+`include "../modules/UART_TX.v"
 // This testbench will exercise the UART RX.
 // It sends out byte 0x37, and ensures the RX receives it correctly.
 `timescale 1ns/10ps
 
-module UART_RX_TB;
+module UART_TB;
 
 	// Testbench uses a 25 MHz clock (same as Go Board)
 	// Want to interface to 115200 baud UART
@@ -94,7 +92,7 @@ module UART_RX_TB;
 	initial
 		begin
 			// Required to dump signals to EPWave
-			$dumpfile("leds_tb.vcd");
+			$dumpfile("uart_tb.vcd");
 			$dumpvars(0);
 		end
 
