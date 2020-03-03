@@ -28,9 +28,9 @@ always @(posedge i_Clk) begin
 
 end
 
-assign o_HSync = o_Col_Count < ACTIVE_COLS ? 1'b1 : 1'b0;
-assign o_VSync = o_Row_Count < ACTIVE_ROWS ? 1'b1 : 1'b0;
 assign o_Col_Count = r_Col_Count;
 assign o_Row_Count = r_Row_Count;
+assign o_HSync = o_Col_Count < ACTIVE_COLS ? 1'b1 : 1'b0;
+assign o_VSync = o_Row_Count < ACTIVE_ROWS ? 1'b1 : 1'b0;
 
 endmodule

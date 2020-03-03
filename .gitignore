@@ -4,5 +4,6 @@
 *.sublime-workspace
 *.out
 *.vcd
+*.rpt
 hardware.json
 .sconsign.dblite
