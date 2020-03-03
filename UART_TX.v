@@ -18,6 +18,7 @@ parameter STATE_IDLE = 1'b0;
 parameter STATE_SENDING = 1'b1;
 
 reg r_SM_State = 0;
+reg [7:0] r_Byte = 0;
 reg [7:0] r_Clock_Count = 0;
 reg [3:0] r_Bits_Count = 0;
 reg r_TX_Serial = 1'b1;
@@ -26,6 +27,8 @@ always @(posedge i_Clock) begin
 	case (r_SM_State)
 		STATE_IDLE:
 			begin
+				if (i_DV)
+					r_Byte <= i_TX_Byte;
 				if (i_DV || r_Clock_Count > 0) begin // new byte received
 					if (r_Clock_Count == CLKS_PER_BIT) begin
 						r_Clock_Count <= 0;
@@ -42,7 +45,7 @@ always @(posedge i_Clock) begin
 			begin
 				if (r_Bits_Count < 8) begin
 					if (r_Clock_Count < CLKS_PER_BIT) begin // send current bit
-						r_TX_Serial <= i_TX_Byte[r_Bits_Count];
+						r_TX_Serial <= r_Byte[r_Bits_Count];
 						r_Clock_Count <= r_Clock_Count + 1;
 					end else begin // done sending current bit
 						r_Bits_Count <= r_Bits_Count + 1;
