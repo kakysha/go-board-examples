@@ -2,7 +2,7 @@
 `include "modules/UART_RX.v"
 `include "modules/UART_TX.v"
 
-module UART_RX_To_7_Seg_Top (
+module main (
 	input i_Clk,     // Main Clock
 	input i_UART_RX, // UART RX Data
 	output o_UART_TX,   // UART TX Data
