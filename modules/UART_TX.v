@@ -45,7 +45,7 @@ always @(posedge i_Clock) begin
 			begin
 				if (r_Bits_Count < 8) begin
 					if (r_Clock_Count < CLKS_PER_BIT) begin // send current bit
-						r_TX_Serial <= r_Byte[r_Bits_Count];
+						r_TX_Serial <= r_Byte[r_Bits_Count[2:0]];
 						r_Clock_Count <= r_Clock_Count + 1;
 					end else begin // done sending current bit
 						r_Bits_Count <= r_Bits_Count + 1;

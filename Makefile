@@ -1,0 +1,1 @@
+verilator --cc main.v --exe testbenches/main.cpp --relative-includes

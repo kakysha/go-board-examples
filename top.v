@@ -5,7 +5,7 @@
 `include "modules/VGA_Sync_Porch.v"
 `include "modules/Test_Pattern_Gen.v"
 
-module main (
+module top (
 	input i_Clk,     // Main Clock
 	input i_UART_RX, // UART RX Data
 	output o_UART_TX,   // UART TX Data

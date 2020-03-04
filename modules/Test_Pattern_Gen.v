@@ -89,7 +89,8 @@ assign Pattern_Blu[4] = Pattern_Red[4];
 // 1 1 0       6        Yellow
 // 1 1 1       7        White
 /////////////////////////////////////////////////////////////////////////////
-assign w_Bar_Width = ACTIVE_COLS/8;
+localparam BAR_WIDTH = ACTIVE_COLS/8;
+assign w_Bar_Width = BAR_WIDTH[6:0];
 
 assign w_Bar_Select = i_Col_Count < w_Bar_Width*1 ? 0 :
 	i_Col_Count < w_Bar_Width*2 ? 1 :

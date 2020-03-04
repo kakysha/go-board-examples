@@ -44,7 +44,7 @@ always @(posedge i_Clock) begin
 					if (r_Clock_Count < CLKS_PER_BIT) // forward to next bit
 						r_Clock_Count <= r_Clock_Count + 1;
 					else begin
-						r_RX_Byte[r_Bits_Count] <= i_RX_Serial;
+						r_RX_Byte[r_Bits_Count[2:0]] <= i_RX_Serial;
 						r_Bits_Count <= r_Bits_Count + 1;
 						r_Clock_Count <= 0;
 					end
