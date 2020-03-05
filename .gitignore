@@ -7,3 +7,4 @@
 *.rpt
 hardware.json
 .sconsign.dblite
+testbenches/obj_dir/
