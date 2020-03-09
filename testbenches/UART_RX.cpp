@@ -7,15 +7,9 @@ VerilatedVcdC* tfp;
 unsigned int tickcount = 0;
 
 VUART_RX* tb;
+char old_o_DV = 0;
 
 const int CLKS_PER_BIT = 217; // BAUD
-
-void write_byte(const char input) {
-	char bits_sent = 0;
-	while (bits_sent < 8) {
-
-	}
-}
 
 void tick() {
 	++tickcount;
@@ -27,6 +21,34 @@ void tick() {
 	tb->eval();
 	tfp->dump(tickcount * PERIOD);
 	tfp->flush();
+
+	if (tb->o_DV == 1 && old_o_DV == 0) {
+		printf("Byte received: %x\n", tb->o_RX_Byte);
+	}
+	old_o_DV = tb->o_DV;
+}
+
+void send_byte(char data) {
+	// start bit
+	for (int i = 0; i < CLKS_PER_BIT; i++) {
+		tb->i_RX_Serial = 0;
+		tick();
+	}
+
+	// data bits
+	int bit_num = 0;
+	for (int i = 0; i < 8 * CLKS_PER_BIT; i++) {
+		if (i == bit_num * CLKS_PER_BIT) {
+			tb->i_RX_Serial = (data >> bit_num) & 1;
+			bit_num++;
+		}
+		tick();
+	}
+	// stop bit
+	for (int i = 0; i < CLKS_PER_BIT; i++) {
+		tb->i_RX_Serial = 1;
+		tick();
+	}
 }
 
 int main(int argc, char** argv, char** env) {
@@ -37,32 +59,12 @@ int main(int argc, char** argv, char** env) {
 	tb->trace(tfp, 99);
 	tfp->open("trace.vcd");
 
-	// send byte
-	int data = 0x37;
-	int bit_num = 1;
-	char old_o_DV = 0;
+	send_byte(0x37);
+	send_byte(0x64);
+	send_byte(0x11);
+	send_byte(0x00);
+	send_byte(0xff);
 
-	for (int i = 0; i < (1 << 15); i++)	{
-		tick();
-
-		if (tickcount == 1) {
-			tb->i_RX_Serial = 0;
-			bit_num = 1;
-		}
-		if (bit_num <= 8 && tickcount == bit_num * CLKS_PER_BIT) {
-			tb->i_RX_Serial = (data >> (bit_num - 1)) & 1;
-			bit_num++;
-		}
-		if (bit_num == 9 && tickcount == bit_num * CLKS_PER_BIT) {
-			tb->i_RX_Serial = 1;
-			bit_num++;
-		}
-
-		if (tb->o_DV == 1 && old_o_DV != tb->o_DV) {
-			printf("Byte received: %x\n", tb->o_RX_Byte);
-		}
-		old_o_DV = tb->o_DV;
-	}
 	tfp->close();
 	tb->final();
 	delete tb;
