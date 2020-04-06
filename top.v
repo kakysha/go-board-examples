@@ -1,14 +1,10 @@
+`include "modules/game.v"
 `include "modules/Binary_To_7Segment.v"
-`include "modules/UART_RX.v"
-`include "modules/UART_TX.v"
 `include "modules/VGA_Sync.v"
 `include "modules/VGA_Sync_Porch.v"
-`include "modules/Test_Pattern_Gen.v"
 
 module top (
 	input i_Clk,     // Main Clock
-	input i_UART_RX, // UART RX Data
-	output o_UART_TX,   // UART TX Data
 	// Segment1 is upper digit, Segment2 is lower digit
 	output o_Segment1_A,
 	output o_Segment1_B,
@@ -40,8 +36,8 @@ module top (
 	output o_VGA_Blu_2
 );
 
-wire w_DV;
-wire [7:0] w_RX_Byte;
+
+wire w_draw;
 
 // VGA Constants to set Frame Size
 parameter c_VIDEO_WIDTH = 3;
@@ -49,24 +45,13 @@ parameter c_TOTAL_COLS  = 800;
 parameter c_TOTAL_ROWS  = 525;
 parameter c_ACTIVE_COLS = 640;
 parameter c_ACTIVE_ROWS = 480;
+parameter GAME_WIDTH = 40;
+parameter GAME_HEIGHT = 30;
 
 // Common VGA Signals
 wire w_VGA_HSync, w_VGA_VSync;
 wire [c_VIDEO_WIDTH-1:0] w_Red_Video_TP, w_Grn_Video_TP, w_Blu_Video_TP, w_Red_Video_Porch, w_Grn_Video_Porch, w_Blu_Video_Porch;
 wire [9:0] w_Row_Count, w_Col_Count;
-
-// 25,000,000 / 115,200 = 217
-UART_RX #(.CLKS_PER_BIT(217)) UART_RX_Inst
-	(.i_Clock(i_Clk),
-		.i_RX_Serial(i_UART_RX),
-		.o_RX_Byte(w_RX_Byte),
-		.o_DV(w_DV));
-
-UART_TX #(.CLKS_PER_BIT(217)) UART_TX_Inst
-	(.i_Clock(i_Clk),
-		.i_DV(w_DV),
-		.i_TX_Byte(w_RX_Byte),  // Pass RX to TX module for loopback
-		.o_TX_Serial(o_UART_TX));
 
 // Binary to 7-Segment Converter for Upper Digit
 Binary_To_7Segment SevenSeg1_Inst
@@ -104,17 +89,16 @@ VGA_Sync #(.TOTAL_COLS(c_TOTAL_COLS),
 	.o_Row_Count(w_Row_Count)
 );
 
-Test_Pattern_Gen  #(.VIDEO_WIDTH(c_VIDEO_WIDTH),
-	.ACTIVE_COLS(c_ACTIVE_COLS),
-	.ACTIVE_ROWS(c_ACTIVE_ROWS))
-Test_Pattern_Gen_Inst
-	(.i_Clk(i_Clk),
-		.i_Pattern(w_RX_Byte[3:0]),
-		.i_Col_Count(w_Col_Count),
-		.i_Row_Count(w_Row_Count),
-		.o_Red_Video(w_Red_Video_TP),
-		.o_Grn_Video(w_Grn_Video_TP),
-		.o_Blu_Video(w_Blu_Video_TP));
+game #(.GAME_WIDTH(GAME_WIDTH), .GAME_HEIGHT(GAME_HEIGHT)) game_Inst (
+	.i_clk      (i_Clk),
+	.i_row      (w_Row_Count[9:4]),
+	.i_col 	(w_Col_Count[9:4]),
+	.o_draw (w_draw)
+);
+
+assign w_Red_Video_TP = w_draw ? 4'b1111 : 4'b0000;
+assign w_Grn_Video_TP = w_draw ? 4'b1111 : 4'b0000;
+assign w_Blu_Video_TP = w_draw ? 4'b1111 : 4'b0000;
 
 VGA_Sync_Porch  #(.VIDEO_WIDTH(c_VIDEO_WIDTH),
 	.TOTAL_COLS(c_TOTAL_COLS),
