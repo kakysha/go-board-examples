@@ -10,6 +10,7 @@ module game #(parameter GAME_WIDTH = 40, parameter GAME_HEIGHT = 40)(
 	input button_p1_down,
 	input button_p2_up,
 	input button_p2_down,*/
+	output [1:0] o_ball_direction,
 
 	output o_draw
 );
@@ -21,7 +22,8 @@ ball #(.GAME_WIDTH(GAME_WIDTH), .GAME_HEIGHT(GAME_HEIGHT)) ball_inst (
 	.i_enabled(1'b1),
 	.i_col(i_col),
 	.i_row(i_row),
-	.o_draw   (r_ball_draw)
+	.o_draw   (r_ball_draw),
+	.o_ball_direction(o_ball_direction)
 );
 
 assign o_draw = r_ball_draw;

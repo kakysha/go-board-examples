@@ -52,11 +52,15 @@ parameter GAME_HEIGHT = 30;
 wire w_VGA_HSync, w_VGA_VSync;
 wire [c_VIDEO_WIDTH-1:0] w_Red_Video_TP, w_Grn_Video_TP, w_Blu_Video_TP, w_Red_Video_Porch, w_Grn_Video_Porch, w_Blu_Video_Porch;
 wire [9:0] w_Row_Count, w_Col_Count;
+reg [1:0] r_ball_direction;
+wire [7:0] r_ball_direction_digits;
+assign r_ball_direction_digits[7:4] = 4'b0001 & r_ball_direction[1:1];
+assign r_ball_direction_digits[3:0] = 4'b0001 & r_ball_direction[0:0];
 
 // Binary to 7-Segment Converter for Upper Digit
 Binary_To_7Segment SevenSeg1_Inst
 	(.i_Clk(i_Clk),
-		.i_Binary_Num(w_RX_Byte[7:4]),
+		.i_Binary_Num(r_ball_direction_digits[7:4]),
 		.o_Segment_A(o_Segment1_A),
 		.o_Segment_B(o_Segment1_B),
 		.o_Segment_C(o_Segment1_C),
@@ -68,7 +72,7 @@ Binary_To_7Segment SevenSeg1_Inst
 // Binary to 7-Segment Converter for Lower Digit
 Binary_To_7Segment SevenSeg2_Inst
 	(.i_Clk(i_Clk),
-		.i_Binary_Num(w_RX_Byte[3:0]),
+		.i_Binary_Num(r_ball_direction_digits[3:0]),
 		.o_Segment_A(o_Segment2_A),
 		.o_Segment_B(o_Segment2_B),
 		.o_Segment_C(o_Segment2_C),
@@ -93,12 +97,13 @@ game #(.GAME_WIDTH(GAME_WIDTH), .GAME_HEIGHT(GAME_HEIGHT)) game_Inst (
 	.i_clk      (i_Clk),
 	.i_row      (w_Row_Count[9:4]),
 	.i_col 	(w_Col_Count[9:4]),
+	.o_ball_direction(r_ball_direction),
 	.o_draw (w_draw)
 );
 
-assign w_Red_Video_TP = w_draw ? 4'b1111 : 4'b0000;
-assign w_Grn_Video_TP = w_draw ? 4'b1111 : 4'b0000;
-assign w_Blu_Video_TP = w_draw ? 4'b1111 : 4'b0000;
+assign w_Red_Video_TP = 1 ? 3'b111 : 0;
+assign w_Grn_Video_TP = 1 ? 3'b111 : 0;
+assign w_Blu_Video_TP = 1 ? 3'b111 : 0;
 
 VGA_Sync_Porch  #(.VIDEO_WIDTH(c_VIDEO_WIDTH),
 	.TOTAL_COLS(c_TOTAL_COLS),

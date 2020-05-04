@@ -32,7 +32,7 @@ int main(int argc, char** argv, char** env) {
 	for (int n = 0; n < 60; n++)
 		for (int row = 0; row < 30; row++)
 			for (int col = 0; col < 40; col++)
-				for (int clock = 0; clock < 350; clock++) {
+				for (int clock = 0; clock < 35; clock++) {
 					tb->i_col = col;
 					tb->i_row = row;
 					tick();
