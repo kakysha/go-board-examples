@@ -1,12 +1,14 @@
+/* verilator lint_off UNUSED */
+
 `include "modules/game.v"
-`include "modules/Binary_To_7Segment.v"
+//`include "modules/Binary_To_7Segment.v"
 `include "modules/VGA_Sync.v"
-`include "modules/VGA_Sync_Porch.v"
+//`include "modules/VGA_Sync_Porch.v"
 
 module top (
 	input i_Clk,     // Main Clock
 	// Segment1 is upper digit, Segment2 is lower digit
-	output o_Segment1_A,
+	/*output o_Segment1_A,
 	output o_Segment1_B,
 	output o_Segment1_C,
 	output o_Segment1_D,
@@ -34,6 +36,13 @@ module top (
 	output o_VGA_Blu_0,
 	output o_VGA_Blu_1,
 	output o_VGA_Blu_2
+	*/
+
+	output o_VGA_HSync,
+	output o_VGA_VSync,
+	output [2:0] o_Red_Video_Porch,
+	output [2:0] o_Grn_Video_Porch,
+	output [2:0] o_Blu_Video_Porch
 );
 
 
@@ -53,9 +62,10 @@ wire w_VGA_HSync, w_VGA_VSync;
 wire [c_VIDEO_WIDTH-1:0] w_Red_Video_TP, w_Grn_Video_TP, w_Blu_Video_TP, w_Red_Video_Porch, w_Grn_Video_Porch, w_Blu_Video_Porch;
 wire [9:0] w_Row_Count, w_Col_Count;
 reg [1:0] r_ball_direction;
-wire [7:0] r_ball_direction_digits;
+/*wire [7:0] r_ball_direction_digits;
 assign r_ball_direction_digits[7:4] = 4'b0001 & r_ball_direction[1:1];
 assign r_ball_direction_digits[3:0] = 4'b0001 & r_ball_direction[0:0];
+
 
 // Binary to 7-Segment Converter for Upper Digit
 Binary_To_7Segment SevenSeg1_Inst
@@ -80,6 +90,7 @@ Binary_To_7Segment SevenSeg2_Inst
 		.o_Segment_E(o_Segment2_E),
 		.o_Segment_F(o_Segment2_F),
 		.o_Segment_G(o_Segment2_G));
+*/
 
 // Generates Sync Pulses to run VGA
 VGA_Sync #(.TOTAL_COLS(c_TOTAL_COLS),
@@ -87,8 +98,8 @@ VGA_Sync #(.TOTAL_COLS(c_TOTAL_COLS),
 	.ACTIVE_COLS(c_ACTIVE_COLS),
 	.ACTIVE_ROWS(c_ACTIVE_ROWS)) VGA_Sync_Inst
 (.i_Clk(i_Clk),
-	.o_HSync(w_VGA_HSync),
-	.o_VSync(w_VGA_VSync),
+	.o_HSync(o_VGA_HSync),
+	.o_VSync(o_VGA_VSync),
 	.o_Col_Count(w_Col_Count),
 	.o_Row_Count(w_Row_Count)
 );
@@ -101,11 +112,11 @@ game #(.GAME_WIDTH(GAME_WIDTH), .GAME_HEIGHT(GAME_HEIGHT)) game_Inst (
 	.o_draw (w_draw)
 );
 
-assign w_Red_Video_TP = 1 ? 3'b111 : 0;
-assign w_Grn_Video_TP = 1 ? 3'b111 : 0;
-assign w_Blu_Video_TP = 1 ? 3'b111 : 0;
+assign w_Red_Video_TP = w_draw ? 3'b111 : 3'b000;
+assign w_Grn_Video_TP = w_draw ? 3'b111 : 3'b000;
+assign w_Blu_Video_TP = w_draw ? 3'b111 : 3'b000;
 
-VGA_Sync_Porch  #(.VIDEO_WIDTH(c_VIDEO_WIDTH),
+/*VGA_Sync_Porch  #(.VIDEO_WIDTH(c_VIDEO_WIDTH),
 	.TOTAL_COLS(c_TOTAL_COLS),
 	.TOTAL_ROWS(c_TOTAL_ROWS),
 	.ACTIVE_COLS(c_ACTIVE_COLS),
@@ -125,7 +136,7 @@ VGA_Sync_Porch_Inst
 		.o_Grn_Video(w_Grn_Video_Porch),
 		.o_Blu_Video(w_Blu_Video_Porch));
 
-assign o_VGA_Red_0 = w_Red_Video_Porch[0];
+/*assign o_VGA_Red_0 = w_Red_Video_Porch[0];
 assign o_VGA_Red_1 = w_Red_Video_Porch[1];
 assign o_VGA_Red_2 = w_Red_Video_Porch[2];
 
@@ -135,6 +146,10 @@ assign o_VGA_Grn_2 = w_Grn_Video_Porch[2];
 
 assign o_VGA_Blu_0 = w_Blu_Video_Porch[0];
 assign o_VGA_Blu_1 = w_Blu_Video_Porch[1];
-assign o_VGA_Blu_2 = w_Blu_Video_Porch[2];
+assign o_VGA_Blu_2 = w_Blu_Video_Porch[2];*/
+
+assign o_Red_Video_Porch = w_Red_Video_TP;
+assign o_Grn_Video_Porch = w_Grn_Video_TP;
+assign o_Blu_Video_Porch = w_Blu_Video_TP;
 
 endmodule
