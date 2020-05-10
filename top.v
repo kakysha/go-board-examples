@@ -52,7 +52,7 @@ wire w_draw;
 // VGA Constants to set Frame Size
 parameter c_VIDEO_WIDTH = 3;
 parameter c_TOTAL_COLS  = 800;
-parameter c_TOTAL_ROWS  = 525;
+parameter c_TOTAL_ROWS  = 521;
 parameter c_ACTIVE_COLS = 640;
 parameter c_ACTIVE_ROWS = 480;
 parameter GAME_WIDTH = 40;

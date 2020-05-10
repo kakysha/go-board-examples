@@ -16,7 +16,7 @@ int main(int argc, char** argv, char** env) {
 	auto m = tb->m;
 #ifdef USEVGASIM
 	Glib::signal_idle().connect([&m_vga, &m, &tb] {
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 350; i++) {
 			m_vga(m->o_VGA_VSync, m->o_VGA_HSync, m->o_Red_Video_Porch, m->o_Grn_Video_Porch, m->o_Blu_Video_Porch);
 			tb->tick();
 		}
