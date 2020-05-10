@@ -23,7 +23,7 @@ module top (
 	output o_Segment2_D,
 	output o_Segment2_E,
 	output o_Segment2_F,
-	output o_Segment2_G,
+	output o_Segment2_G,*/
 
 	// VGA
 	output o_VGA_HSync,
@@ -37,13 +37,6 @@ module top (
 	output o_VGA_Blu_0,
 	output o_VGA_Blu_1,
 	output o_VGA_Blu_2
-	*/
-
-	output o_VGA_HSync,
-	output o_VGA_VSync,
-	output [2:0] o_Red_Video_Porch,
-	output [2:0] o_Grn_Video_Porch,
-	output [2:0] o_Blu_Video_Porch
 );
 
 
@@ -113,7 +106,7 @@ game #(.GAME_WIDTH(GAME_WIDTH), .GAME_HEIGHT(GAME_HEIGHT)) game_Inst (
 	.o_draw (w_draw)
 );
 
-assign w_Red_Video_TP = w_draw ? 3'b111 : 3'b111;
+assign w_Red_Video_TP = w_draw ? 3'b111 : 3'b100;
 assign w_Grn_Video_TP = w_draw ? 3'b111 : 3'b000;
 assign w_Blu_Video_TP = w_draw ? 3'b111 : 3'b000;
 
@@ -137,7 +130,7 @@ VGA_Sync_Porch_Inst
 		.o_Grn_Video(w_Grn_Video_Porch),
 		.o_Blu_Video(w_Blu_Video_Porch));
 
-/*assign o_VGA_Red_0 = w_Red_Video_Porch[0];
+assign o_VGA_Red_0 = w_Red_Video_Porch[0];
 assign o_VGA_Red_1 = w_Red_Video_Porch[1];
 assign o_VGA_Red_2 = w_Red_Video_Porch[2];
 
@@ -147,10 +140,6 @@ assign o_VGA_Grn_2 = w_Grn_Video_Porch[2];
 
 assign o_VGA_Blu_0 = w_Blu_Video_Porch[0];
 assign o_VGA_Blu_1 = w_Blu_Video_Porch[1];
-assign o_VGA_Blu_2 = w_Blu_Video_Porch[2];*/
-
-assign o_Red_Video_Porch = w_Red_Video_Porch;
-assign o_Grn_Video_Porch = w_Grn_Video_Porch;
-assign o_Blu_Video_Porch = w_Blu_Video_Porch;
+assign o_VGA_Blu_2 = w_Blu_Video_Porch[2];
 
 endmodule

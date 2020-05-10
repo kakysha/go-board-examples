@@ -27,6 +27,9 @@ ifdef ENABLE_TRACE
 	gtkwave $(TB_DIR)/$(OBJ_DIR)/trace.vcd
 endif
 
+upload:
+	apio verify && apio build && apio upload
+
 .PHONY: clean
 clean:
 	apio clean
