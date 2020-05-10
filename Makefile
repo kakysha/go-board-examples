@@ -1,4 +1,4 @@
-ENABLE_TRACE =
+ENABLE_TRACE = 
 ENABLE_VGASIM = 1
 
 TB_DIR = testbenches

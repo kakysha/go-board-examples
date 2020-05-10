@@ -3,7 +3,8 @@
 `include "modules/game.v"
 //`include "modules/Binary_To_7Segment.v"
 `include "modules/VGA_Sync.v"
-//`include "modules/VGA_Sync_Porch.v"
+`include "modules/VGA_Sync_Porch.v"
+//`include "llvga.v"
 
 module top (
 	input i_Clk,     // Main Clock
@@ -98,8 +99,8 @@ VGA_Sync #(.TOTAL_COLS(c_TOTAL_COLS),
 	.ACTIVE_COLS(c_ACTIVE_COLS),
 	.ACTIVE_ROWS(c_ACTIVE_ROWS)) VGA_Sync_Inst
 (.i_Clk(i_Clk),
-	.o_HSync(o_VGA_HSync),
-	.o_VSync(o_VGA_VSync),
+	.o_HSync(w_VGA_HSync),
+	.o_VSync(w_VGA_VSync),
 	.o_Col_Count(w_Col_Count),
 	.o_Row_Count(w_Row_Count)
 );
@@ -112,11 +113,11 @@ game #(.GAME_WIDTH(GAME_WIDTH), .GAME_HEIGHT(GAME_HEIGHT)) game_Inst (
 	.o_draw (w_draw)
 );
 
-assign w_Red_Video_TP = w_draw ? 3'b111 : 3'b000;
+assign w_Red_Video_TP = w_draw ? 3'b111 : 3'b111;
 assign w_Grn_Video_TP = w_draw ? 3'b111 : 3'b000;
 assign w_Blu_Video_TP = w_draw ? 3'b111 : 3'b000;
 
-/*VGA_Sync_Porch  #(.VIDEO_WIDTH(c_VIDEO_WIDTH),
+VGA_Sync_Porch  #(.VIDEO_WIDTH(c_VIDEO_WIDTH),
 	.TOTAL_COLS(c_TOTAL_COLS),
 	.TOTAL_ROWS(c_TOTAL_ROWS),
 	.ACTIVE_COLS(c_ACTIVE_COLS),
@@ -148,8 +149,8 @@ assign o_VGA_Blu_0 = w_Blu_Video_Porch[0];
 assign o_VGA_Blu_1 = w_Blu_Video_Porch[1];
 assign o_VGA_Blu_2 = w_Blu_Video_Porch[2];*/
 
-assign o_Red_Video_Porch = w_Red_Video_TP;
-assign o_Grn_Video_Porch = w_Grn_Video_TP;
-assign o_Blu_Video_Porch = w_Blu_Video_TP;
+assign o_Red_Video_Porch = w_Red_Video_Porch;
+assign o_Grn_Video_Porch = w_Grn_Video_Porch;
+assign o_Blu_Video_Porch = w_Blu_Video_Porch;
 
 endmodule
