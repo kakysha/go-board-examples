@@ -14,6 +14,8 @@ int main(int argc, char** argv, char** env) {
 	Verilated::commandArgs(argc, argv);
 	auto tb = new TESTBENCH<Vtop>();
 	auto m = tb->m;
+	m->i_Switch_4 = 1;
+	m->i_Switch_2 = 1;
 #ifdef USEVGASIM
 	Glib::signal_idle().connect([&m_vga, &m, &tb] {
 		for (int i = 0; i < 350; i++) {

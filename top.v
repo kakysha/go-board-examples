@@ -1,6 +1,7 @@
 /* verilator lint_off UNUSED */
 
 `include "modules/game.v"
+`include "modules/Debounce_Switch.v"
 //`include "modules/Binary_To_7Segment.v"
 `include "modules/VGA_Sync.v"
 `include "modules/VGA_Sync_Porch.v"
@@ -25,6 +26,11 @@ module top (
 	output o_Segment2_F,
 	output o_Segment2_G,*/
 
+	input  i_Switch_1,
+	input  i_Switch_2,
+	input  i_Switch_3,
+	input  i_Switch_4,
+
 	// VGA
 	output o_VGA_HSync,
 	output o_VGA_VSync,
@@ -40,7 +46,7 @@ module top (
 );
 
 
-wire w_draw;
+wire w_draw, w_p1_up, w_p1_down, w_p2_up, w_p2_down;
 
 // VGA Constants to set Frame Size
 parameter c_VIDEO_WIDTH = 3;
@@ -55,12 +61,8 @@ parameter GAME_HEIGHT = 30;
 wire w_VGA_HSync, w_VGA_VSync;
 wire [c_VIDEO_WIDTH-1:0] w_Red_Video_TP, w_Grn_Video_TP, w_Blu_Video_TP, w_Red_Video_Porch, w_Grn_Video_Porch, w_Blu_Video_Porch;
 wire [9:0] w_Row_Count, w_Col_Count;
-reg [1:0] r_ball_direction;
-/*wire [7:0] r_ball_direction_digits;
-assign r_ball_direction_digits[7:4] = 4'b0001 & r_ball_direction[1:1];
-assign r_ball_direction_digits[3:0] = 4'b0001 & r_ball_direction[0:0];
 
-
+/*
 // Binary to 7-Segment Converter for Upper Digit
 Binary_To_7Segment SevenSeg1_Inst
 	(.i_Clk(i_Clk),
@@ -98,11 +100,35 @@ VGA_Sync #(.TOTAL_COLS(c_TOTAL_COLS),
 	.o_Row_Count(w_Row_Count)
 );
 
+Debounce_Switch p1_up (
+	.i_Clk(i_Clk),
+	.i_Switch(i_Switch_1),
+	.o_Switch(w_p1_up)
+);
+Debounce_Switch p1_down (
+	.i_Clk(i_Clk),
+	.i_Switch(i_Switch_2),
+	.o_Switch(w_p1_down)
+);
+Debounce_Switch p2_up (
+	.i_Clk(i_Clk),
+	.i_Switch(i_Switch_3),
+	.o_Switch(w_p2_up)
+);
+Debounce_Switch p2_down (
+	.i_Clk(i_Clk),
+	.i_Switch(i_Switch_4),
+	.o_Switch(w_p2_down)
+);
+
 game #(.GAME_WIDTH(GAME_WIDTH), .GAME_HEIGHT(GAME_HEIGHT)) game_Inst (
 	.i_clk      (i_Clk),
 	.i_row      (w_Row_Count[9:4]),
 	.i_col 	(w_Col_Count[9:4]),
-	.o_ball_direction(r_ball_direction),
+	.button_p1_up(w_p1_up),
+	.button_p1_down(w_p1_down),
+	.button_p2_up(w_p2_up),
+	.button_p2_down(w_p2_down),
 	.o_draw (w_draw)
 );
 

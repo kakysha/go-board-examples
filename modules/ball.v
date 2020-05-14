@@ -3,8 +3,7 @@ module ball #(parameter GAME_WIDTH = 40, parameter GAME_HEIGHT = 30) (
 	input i_enabled,
 	input [5:0] i_col,
 	input [5:0] i_row,
-	output reg o_draw = 1'b0,
-	output [1:0] o_ball_direction
+	output reg o_draw = 1'b0
 );
 
 parameter BALL_SPEED = 25000000/40; // how many clock cycles for one ball move
@@ -56,7 +55,5 @@ begin
 	else
 		o_draw <= 1'b0;
 end
-
-assign o_ball_direction = r_ball_direction;
 
 endmodule
